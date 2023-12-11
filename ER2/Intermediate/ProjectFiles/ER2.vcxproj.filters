@@ -11,6 +11,8 @@
     <None Include="..\..\Source\ER2Editor.Target.cs">
       <Filter>Source</Filter>
     </None>
+    <None Include="..\..\.vsconfig" />
+    <None Include="..\..\SCK_Casual01.png" />
     <Filter Include="Config">
       <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
     </Filter>
@@ -36,6 +38,12 @@
       <Filter>Source\ER2</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\ER2\ER2.h">
+      <Filter>Source\ER2</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\ER2\PlayerCharacter.cpp">
+      <Filter>Source\ER2</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ER2\PlayerCharacter.h">
       <Filter>Source\ER2</Filter>
     </ClInclude>
   </ItemGroup>

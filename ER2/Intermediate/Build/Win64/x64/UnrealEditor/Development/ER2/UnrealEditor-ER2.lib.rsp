@@ -7,6 +7,9 @@
 /IGNORE:4221
 /NODEFAULTLIB
 "Z:\Git\ER2\ER2\Intermediate\Build\Win64\x64\ER2Editor\Development\Engine\SharedPCH.Engine.Cpp20.h.obj"
+"Z:\Git\ER2\ER2\Intermediate\Build\Win64\x64\UnrealEditor\Development\ER2\ER2.init.gen.cpp.obj"
+"Z:\Git\ER2\ER2\Intermediate\Build\Win64\x64\UnrealEditor\Development\ER2\PlayerCharacter.gen.cpp.obj"
 "Z:\Git\ER2\ER2\Intermediate\Build\Win64\x64\UnrealEditor\Development\ER2\ER2.cpp.obj"
+"Z:\Git\ER2\ER2\Intermediate\Build\Win64\x64\UnrealEditor\Development\ER2\PlayerCharacter.cpp.obj"
 "Z:\Git\ER2\ER2\Intermediate\Build\Win64\x64\UnrealEditor\Development\ER2\Default.rc2.res"
 /OUT:"Z:\Git\ER2\ER2\Intermediate\Build\Win64\x64\UnrealEditor\Development\ER2\UnrealEditor-ER2.lib"

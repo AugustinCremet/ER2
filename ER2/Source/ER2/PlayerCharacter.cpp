@@ -36,25 +36,37 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     const FVector2D DirectionValue = Value.Get<FVector2D>();
     const FRotator FacingRight = FRotator(0, 0, 0);
     const FRotator FacingLeft = FRotator(0, 180, 0);
+    const FRotator FacingBack = FRotator(0, 270, 0);
+    const FRotator FacingFront = FRotator(0, 90, 0);
+    const FVector XAxis = FVector(1.f, 0.f, 0.f);
+    const FVector YAxis = FVector(0.f, -1.f, 0.f);
 
+    UInputModifierDeadZone* test = (UInputModifierDeadZone*)MoveAction->Modifiers[0];
 
-    if (GetController() != nullptr && (DirectionValue.X != 0.f || DirectionValue.Y != 0.f))
+    if (GetController() != nullptr && abs(DirectionValue.X) >= test->LowerThreshold)
     {
-        FVector XAxis = FVector(1.f, 0.f, 0.f);
         AddMovementInput(XAxis, DirectionValue.X);
-
-        FVector YAxis = FVector(0.f, -1.f, 0.f);
-        AddMovementInput(YAxis, DirectionValue.Y);
-
         if (DirectionValue.X < 0.f)
         {
             SetActorRotation(FacingLeft, ETeleportType::None);
-            UE_LOG(LogTemp, Warning, TEXT("Should Flip (%f)"), GetActorRotation().Yaw);
         }
         else
         {
             SetActorRotation(FacingRight, ETeleportType::None);
-            UE_LOG(LogTemp, Warning, TEXT("Should NOTTTT Flip %f"), GetActorRotation().Yaw);
+        }
+
+    }
+    
+    if (GetController() != nullptr && abs(DirectionValue.Y) >= test->LowerThreshold)
+    {
+        AddMovementInput(YAxis, DirectionValue.Y);
+        if (DirectionValue.Y < 0.f)
+        {
+            SetActorRotation(FacingFront, ETeleportType::None);
+        }
+        else
+        {
+            SetActorRotation(FacingBack, ETeleportType::None);
         }
     }
 }

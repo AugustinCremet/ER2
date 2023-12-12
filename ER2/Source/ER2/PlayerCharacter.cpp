@@ -33,12 +33,29 @@ void APlayerCharacter::BeginPlay()
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-    const float DirectionValue = Value.Get<float>();
+    const FVector2D DirectionValue = Value.Get<FVector2D>();
+    const FRotator FacingRight = FRotator(0, 0, 0);
+    const FRotator FacingLeft = FRotator(0, 180, 0);
 
-    if (Controller != nullptr && DirectionValue != 0.f)
+
+    if (GetController() != nullptr && (DirectionValue.X != 0.f || DirectionValue.Y != 0.f))
     {
-        FVector Forward = GetActorForwardVector();
-        AddMovementInput(Forward, DirectionValue);
+        FVector XAxis = FVector(1.f, 0.f, 0.f);
+        AddMovementInput(XAxis, DirectionValue.X);
+
+        FVector YAxis = FVector(0.f, -1.f, 0.f);
+        AddMovementInput(YAxis, DirectionValue.Y);
+
+        if (DirectionValue.X < 0.f)
+        {
+            SetActorRotation(FacingLeft, ETeleportType::None);
+            UE_LOG(LogTemp, Warning, TEXT("Should Flip (%f)"), GetActorRotation().Yaw);
+        }
+        else
+        {
+            SetActorRotation(FacingRight, ETeleportType::None);
+            UE_LOG(LogTemp, Warning, TEXT("Should NOTTTT Flip %f"), GetActorRotation().Yaw);
+        }
     }
 }
 

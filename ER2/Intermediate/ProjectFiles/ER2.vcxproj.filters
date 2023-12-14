@@ -11,6 +11,7 @@
     <None Include="..\..\Source\ER2Editor.Target.cs">
       <Filter>Source</Filter>
     </None>
+    <None Include="..\..\.gitignore" />
     <None Include="..\..\.vsconfig" />
     <None Include="..\..\SCK_Casual01.png" />
     <Filter Include="Config">
@@ -44,6 +45,12 @@
       <Filter>Source\ER2</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\ER2\PlayerCharacter.h">
+      <Filter>Source\ER2</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\ER2\WalkableDetector.cpp">
+      <Filter>Source\ER2</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ER2\WalkableDetector.h">
       <Filter>Source\ER2</Filter>
     </ClInclude>
   </ItemGroup>

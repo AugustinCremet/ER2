@@ -17,6 +17,8 @@
             "z:\\unreal\\ue_5.3\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\character.generated.h",
             "z:\\unreal\\ue_5.3\\engine\\plugins\\enhancedinput\\source\\enhancedinput\\public\\inputactionvalue.h",
             "z:\\unreal\\ue_5.3\\engine\\plugins\\enhancedinput\\intermediate\\build\\win64\\unrealeditor\\inc\\enhancedinput\\uht\\inputactionvalue.generated.h",
+            "z:\\git\\er2\\er2\\source\\er2\\walkabledetector.h",
+            "z:\\git\\er2\\er2\\intermediate\\build\\win64\\unrealeditor\\inc\\er2\\uht\\walkabledetector.generated.h",
             "z:\\git\\er2\\er2\\intermediate\\build\\win64\\unrealeditor\\inc\\er2\\uht\\playercharacter.generated.h"
         ],
         "ImportedModules": [],

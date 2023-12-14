@@ -29,46 +29,44 @@ void APlayerCharacter::BeginPlay()
 
         }
     }
+
+    MyComponent = FindComponentByClass<UWalkableDetector>();
 }
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
+    MyComponent->IsThereAHit();
     const FVector2D DirectionValue = Value.Get<FVector2D>();
     const FRotator FacingRight = FRotator(0, 0, 0);
     const FRotator FacingLeft = FRotator(0, 180, 0);
     const FRotator FacingBack = FRotator(0, 270, 0);
     const FRotator FacingFront = FRotator(0, 90, 0);
     const FVector XAxis = FVector(1.f, 0.f, 0.f);
-    const FVector YAxis = FVector(0.f, -1.f, 0.f);
+    const FVector YAxis = FVector(0.f, 1.f, 0.f);
 
-    UInputModifierDeadZone* test = (UInputModifierDeadZone*)MoveAction->Modifiers[0];
+    UInputModifierDeadZone* DeadZone = (UInputModifierDeadZone*)MoveAction->Modifiers[0];
+    
+    double angle = FMath::RadiansToDegrees(FMath::Atan2(DirectionValue.Y, DirectionValue.X));
 
-    if (GetController() != nullptr && abs(DirectionValue.X) >= test->LowerThreshold)
+    if (GetController() != nullptr && abs(DirectionValue.X) >= DeadZone->LowerThreshold)
     {
         AddMovementInput(XAxis, DirectionValue.X);
-        if (DirectionValue.X < 0.f)
-        {
-            SetActorRotation(FacingLeft, ETeleportType::None);
-        }
-        else
-        {
+        if (DirectionValue.X > 0.0)
             SetActorRotation(FacingRight, ETeleportType::None);
-        }
-
+        else
+            SetActorRotation(FacingLeft, ETeleportType::None);
     }
     
-    if (GetController() != nullptr && abs(DirectionValue.Y) >= test->LowerThreshold)
+    if (GetController() != nullptr && abs(DirectionValue.Y) >= DeadZone->LowerThreshold)
     {
-        AddMovementInput(YAxis, DirectionValue.Y);
-        if (DirectionValue.Y < 0.f)
+        if (MyComponent->IsThereAHit())
         {
-            SetActorRotation(FacingFront, ETeleportType::None);
-        }
-        else
-        {
-            SetActorRotation(FacingBack, ETeleportType::None);
+            AddMovementInput(YAxis, DirectionValue.Y);
+            SetActorRotation(FRotator(0.0, angle, 0.0), ETeleportType::None);
         }
     }
+    
+    
 }
 
 // Called every frame

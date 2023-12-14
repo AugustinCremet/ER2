@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "WalkableDetector.h"
 #include "PlayerCharacter.generated.h"
 
 class UInputMappingContext;
@@ -28,6 +29,9 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
     UInputAction* MoveAction;
+
+    UWalkableDetector* MyComponent;
+
     void Move(const FInputActionValue& Value);
 
 public:	

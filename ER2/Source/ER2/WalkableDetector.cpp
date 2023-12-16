@@ -15,12 +15,6 @@ UWalkableDetector::UWalkableDetector()
 	// ...
 }
 
-bool UWalkableDetector::GetCanGo()
-{
-    return false;
-}
-
-
 // Called when the game starts
 void UWalkableDetector::BeginPlay()
 {
@@ -35,35 +29,32 @@ void UWalkableDetector::BeginPlay()
 void UWalkableDetector::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-    //FVector Start = GetComponentLocation() + FVector(0, 50, 0);
-    //FVector End = Start + FVector(0, 0, -200);
-    //DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5);
-    //DrawDebugSphere(GetWorld(), End, 10, 10, FColor::Blue, false, 5);
-
-    //FCollisionShape Sphere = FCollisionShape::MakeSphere(5);
-    //
-    //FHitResult Hit;
-    //GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_WorldStatic);
-
-    //if (!Hit.bBlockingHit)
-    //{
-    //    UE_LOG(LogTemp, Warning, TEXT("NO hit"));
-    //    CanGo = false;
-    //}
-    //else
-    //{
-    //    UE_LOG(LogTemp, Warning, TEXT("HITTTTT"));
-    //    CanGo = true;
-    //}
 }
 
-bool UWalkableDetector::IsThereAHit()
+bool UWalkableDetector::CanWalkThere(const WalkDirection WalkDirection)
 {
-    FVector Start = GetComponentLocation() + FVector(0, 50, 0);
-    FVector End = Start + FVector(0, 0, -200);
-    DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5);
-    DrawDebugSphere(GetWorld(), End, 10, 10, FColor::Blue, false, 5);
+    FVector Start;
+    FVector End;
+
+    switch (WalkDirection)
+    {
+    case WalkDirection::AWAY:
+        Start = DetectorStartPointAway + GetOwner()->GetActorLocation();
+        End = Start + FVector(0, 0, -300);
+        break;
+    case WalkDirection::TOWARD:
+        Start = DetectorStartPointToward + GetOwner()->GetActorLocation();
+        End = Start + FVector(0, 0, -300);
+        break;
+    case WalkDirection::LEFT:
+    case WalkDirection::RIGHT:
+        Start = GetOwner()->GetActorLocation();
+        End = GetOwner()->GetActorLocation() + GetForwardVector() * 50.0;
+        break;
+    }
+
+    //DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5);
+    //DrawDebugSphere(GetWorld(), End, 10, 10, FColor::Blue, false, 5);
 
     FCollisionShape Sphere = FCollisionShape::MakeSphere(5);
 
@@ -72,12 +63,10 @@ bool UWalkableDetector::IsThereAHit()
 
     if (!Hit.bBlockingHit)
     {
-        UE_LOG(LogTemp, Warning, TEXT("NO hit"));
         return false;
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("HITTTTT"));
         return true;
     }
 }

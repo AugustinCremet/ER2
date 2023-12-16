@@ -6,7 +6,6 @@
 #include "Components/SceneComponent.h"
 #include "WalkableDetector.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ER2_API UWalkableDetector : public USceneComponent
 {
@@ -15,15 +14,29 @@ class ER2_API UWalkableDetector : public USceneComponent
 public:	
 	// Sets default values for this component's properties
 	UWalkableDetector();
-    bool CanGo;
-    bool GetCanGo();
+    enum WalkDirection
+    {
+        AWAY,
+        LEFT,
+        TOWARD,
+        RIGHT
+    };
+
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    FVector DetectorStartPointToward;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    FVector DetectorStartPointAway;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    FVector DetectorStartLeftRight;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-    bool IsThereAHit();		
+    bool CanWalkThere(const WalkDirection Direction);		
 };

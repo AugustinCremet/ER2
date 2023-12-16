@@ -30,9 +30,20 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
     UInputAction* MoveAction;
 
-    UWalkableDetector* MyComponent;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+    UInputAction* JumpAction;
+
+    UWalkableDetector* WalkableDetectorComponent;
+    USkeletalMeshComponent* MeshComponent;
 
     void Move(const FInputActionValue& Value);
+    void Jump(const FInputActionValue& Value);
+
+    const FRotator FacingRight = FRotator(0, 0, 0);
+    const FRotator FacingLeft = FRotator(0, 180, 0);
+    const FVector XAxis = FVector(1.f, 0.f, 0.f);
+    const FVector YAxis = FVector(0.f, 1.f, 0.f);
+    const FVector ZAxis = FVector(0.f, 0.f, 1.f);
 
 public:	
 	// Called every frame

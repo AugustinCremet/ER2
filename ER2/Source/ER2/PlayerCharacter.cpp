@@ -5,13 +5,14 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Components/InputComponent.h"
+#include "Engine/World.h"
+#include "GameFramework/Character.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -30,19 +31,22 @@ void APlayerCharacter::BeginPlay()
         }
     }
 
-    MyComponent = FindComponentByClass<UWalkableDetector>();
+    WalkableDetectorComponent = FindComponentByClass<UWalkableDetector>();
+    MeshComponent = FindComponentByClass<USkeletalMeshComponent>();
+    if (MeshComponent)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("non null"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("null"));
+
+    }
 }
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-    MyComponent->IsThereAHit();
     const FVector2D DirectionValue = Value.Get<FVector2D>();
-    const FRotator FacingRight = FRotator(0, 0, 0);
-    const FRotator FacingLeft = FRotator(0, 180, 0);
-    const FRotator FacingBack = FRotator(0, 270, 0);
-    const FRotator FacingFront = FRotator(0, 90, 0);
-    const FVector XAxis = FVector(1.f, 0.f, 0.f);
-    const FVector YAxis = FVector(0.f, 1.f, 0.f);
 
     UInputModifierDeadZone* DeadZone = (UInputModifierDeadZone*)MoveAction->Modifiers[0];
     
@@ -50,16 +54,21 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
     if (GetController() != nullptr && abs(DirectionValue.X) >= DeadZone->LowerThreshold)
     {
-        AddMovementInput(XAxis, DirectionValue.X);
-        if (DirectionValue.X > 0.0)
-            SetActorRotation(FacingRight, ETeleportType::None);
-        else
-            SetActorRotation(FacingLeft, ETeleportType::None);
+        if (WalkableDetectorComponent->CanWalkThere(UWalkableDetector::WalkDirection::LEFT))
+        {
+            AddMovementInput(XAxis, DirectionValue.X);
+            if (DirectionValue.X > 0.0)
+                SetActorRotation(FacingRight, ETeleportType::None);
+            else
+                SetActorRotation(FacingLeft, ETeleportType::None);
+        }
     }
     
     if (GetController() != nullptr && abs(DirectionValue.Y) >= DeadZone->LowerThreshold)
     {
-        if (MyComponent->IsThereAHit())
+        UWalkableDetector::WalkDirection CurrentDirection = DirectionValue.Y > 0.0 ? UWalkableDetector::WalkDirection::TOWARD : UWalkableDetector::WalkDirection::AWAY;
+
+        if (WalkableDetectorComponent->CanWalkThere(CurrentDirection))
         {
             AddMovementInput(YAxis, DirectionValue.Y);
             SetActorRotation(FRotator(0.0, angle, 0.0), ETeleportType::None);
@@ -69,11 +78,15 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     
 }
 
+void APlayerCharacter::Jump(const FInputActionValue& Value)
+{
+    ACharacter::Jump();
+}
+
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -84,6 +97,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
     {
         EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+        EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Jump);
     }
 }
 

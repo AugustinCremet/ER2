@@ -47,6 +47,7 @@ protected:
     void Glide(const FInputActionValue& Value);
     void StopGlide(const FInputActionValue& Value);
     void Dash(const FInputActionValue& Value);
+    void ResetDash();
 
     const FRotator FacingRight = FRotator(0, 0, 0);
     const FRotator FacingLeft = FRotator(0, 180, 0);
@@ -58,7 +59,9 @@ protected:
     float OriginalAirControl;
 
     bool bIsGliding = false;
+
     bool bIsDashing = false;
+    FTimerHandle DashTimerHandle;
 
 public:	
 	// Called every frame

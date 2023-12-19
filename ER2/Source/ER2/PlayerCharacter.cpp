@@ -106,7 +106,25 @@ void APlayerCharacter::StopGlide(const FInputActionValue& Value)
 
 void APlayerCharacter::Dash(const FInputActionValue& Value)
 {
-    
+    GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Start dash"));
+
+    if (!bIsDashing)
+    {
+        bIsDashing = true;
+        float DashCooldownDuration = 1.f;
+        GetWorld()->GetTimerManager().SetTimer(DashTimerHandle, this, &APlayerCharacter::ResetDash, DashCooldownDuration, false);
+    }
+}
+
+void APlayerCharacter::ResetDash()
+{
+    bIsDashing = false;
+    DashTimerHandle.Invalidate();
+
+    if (CharacterMovementComponent)
+    {
+        GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+    }
 }
 
 // Called every frame
@@ -134,14 +152,6 @@ void APlayerCharacter::Tick(float DeltaTime)
             GetCharacterMovement()->DisableMovement();
 
             SetActorLocation(DashDestination, false);
-
-            FTimerHandle UnusedHandle;
-            GetWorldTimerManager().SetTimer(UnusedHandle, [this]() {
-                if (GetCharacterMovement())
-                {
-                    GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-                }
-                }, DashDuration, false);
         }
     }
 }

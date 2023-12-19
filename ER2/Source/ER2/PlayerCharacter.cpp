@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Components/InputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 
@@ -32,15 +33,13 @@ void APlayerCharacter::BeginPlay()
     }
 
     WalkableDetectorComponent = FindComponentByClass<UWalkableDetector>();
-    MeshComponent = FindComponentByClass<USkeletalMeshComponent>();
-    if (MeshComponent)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("non null"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("null"));
+    SkeletalMeshComponent = FindComponentByClass<USkeletalMeshComponent>();
+    CharacterMovementComponent = FindComponentByClass<UCharacterMovementComponent>();
 
+    if (CharacterMovementComponent)
+    {
+        OriginalGravityScale = CharacterMovementComponent->GravityScale;
+        OriginalAirControl = CharacterMovementComponent->AirControl;
     }
 }
 
@@ -78,15 +77,73 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     
 }
 
-void APlayerCharacter::Jump(const FInputActionValue& Value)
+void APlayerCharacter::Glide(const FInputActionValue& Value)
 {
-    ACharacter::Jump();
+    if (!bIsGliding && JumpCurrentCount == 3)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Yellow, TEXT("Glide!"));
+        
+        bIsGliding = true;
+        CharacterMovementComponent->Velocity = FVector(CharacterMovementComponent->Velocity.X, CharacterMovementComponent->Velocity.Y, 0);
+        CharacterMovementComponent->GravityScale = 0.07f;
+        CharacterMovementComponent->AirControl = 0.7f;
+    }
+}
+
+void APlayerCharacter::StopGlide(const FInputActionValue& Value)
+{
+    if (CharacterMovementComponent)
+    {
+        if (bIsGliding)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Yellow, TEXT("Stop glide"));
+            bIsGliding = false;
+            CharacterMovementComponent->GravityScale = OriginalGravityScale;
+            CharacterMovementComponent->AirControl = OriginalAirControl;
+        }
+    }
+}
+
+void APlayerCharacter::Dash(const FInputActionValue& Value)
+{
+    
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    if (CharacterMovementComponent)
+    {
+        if (bIsGliding && !CharacterMovementComponent->IsFalling())
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Yellow, TEXT("On ground"));
+            bIsGliding = false;
+            CharacterMovementComponent->GravityScale = OriginalGravityScale;
+            CharacterMovementComponent->AirControl = OriginalAirControl;
+        }
+
+        if (bIsDashing)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Yellow, TEXT("Dash"));
+            FVector MovementDirection = CharacterMovementComponent->GetLastInputVector().GetSafeNormal();
+            FVector DashDestination = GetActorLocation() + MovementDirection * 50.0f;
+            float DashDuration = 1.0f;
+
+            GetCharacterMovement()->DisableMovement();
+
+            SetActorLocation(DashDestination, false);
+
+            FTimerHandle UnusedHandle;
+            GetWorldTimerManager().SetTimer(UnusedHandle, [this]() {
+                if (GetCharacterMovement())
+                {
+                    GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+                }
+                }, DashDuration, false);
+        }
+    }
 }
 
 // Called to bind functionality to input
@@ -97,7 +154,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
     {
         EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-        EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Jump);
+        EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+        EnhancedInputComponent->BindAction(GlideAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Glide);
+        EnhancedInputComponent->BindAction(GlideAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopGlide);
+        EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &APlayerCharacter::Dash);
     }
 }
 

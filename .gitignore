@@ -72,3 +72,9 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+ER2/Saved/
+
+ER2/Intermediate/
+
+ER2/Binaries/

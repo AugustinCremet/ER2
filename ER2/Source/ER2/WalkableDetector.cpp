@@ -20,6 +20,7 @@ void UWalkableDetector::BeginPlay()
 {
 	Super::BeginPlay();
 
+    Owner = GetOwner();
 	// ...
 	
 }
@@ -36,15 +37,19 @@ bool UWalkableDetector::CanWalkThere(const WalkDirection WalkDirection)
     FVector Start;
     FVector End;
 
+    FHitResult HitToGround;
+    GetWorld()->LineTraceSingleByChannel(HitToGround, Owner->GetActorLocation(), Owner->GetActorLocation() - FVector(0.f, 0.f, 1000.f), ECC_Visibility);
+    float DistanceToGround = Owner->GetActorLocation().Z - HitToGround.ImpactPoint.Z;
+
     switch (WalkDirection)
     {
     case WalkDirection::AWAY:
-        Start = DetectorStartPointAway + GetOwner()->GetActorLocation();
-        End = Start + FVector(0, 0, -300);
+        Start = DetectorStartPointAway + Owner->GetActorLocation();
+        End = Start + FVector(0.f, 0.f, -50.f - DistanceToGround);
         break;
     case WalkDirection::TOWARD:
-        Start = DetectorStartPointToward + GetOwner()->GetActorLocation();
-        End = Start + FVector(0, 0, -300);
+        Start = DetectorStartPointToward + Owner->GetActorLocation();
+        End = Start + FVector(0.f, 0.f, -50.f - DistanceToGround);
         break;
     case WalkDirection::LEFT:
     case WalkDirection::RIGHT:
@@ -59,7 +64,7 @@ bool UWalkableDetector::CanWalkThere(const WalkDirection WalkDirection)
     FCollisionShape Sphere = FCollisionShape::MakeSphere(5);
 
     FHitResult Hit;
-    GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_WorldStatic);
+    GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_WorldStatic);
 
     if (!Hit.bBlockingHit)
     {

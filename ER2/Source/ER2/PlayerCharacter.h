@@ -33,17 +33,32 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
     UInputAction* JumpAction;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+    UInputAction* GlideAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+    UInputAction* DashAction;
+
     UWalkableDetector* WalkableDetectorComponent;
-    USkeletalMeshComponent* MeshComponent;
+    USkeletalMeshComponent* SkeletalMeshComponent;
+    UCharacterMovementComponent* CharacterMovementComponent;
 
     void Move(const FInputActionValue& Value);
-    void Jump(const FInputActionValue& Value);
+    void Glide(const FInputActionValue& Value);
+    void StopGlide(const FInputActionValue& Value);
+    void Dash(const FInputActionValue& Value);
 
     const FRotator FacingRight = FRotator(0, 0, 0);
     const FRotator FacingLeft = FRotator(0, 180, 0);
     const FVector XAxis = FVector(1.f, 0.f, 0.f);
     const FVector YAxis = FVector(0.f, 1.f, 0.f);
     const FVector ZAxis = FVector(0.f, 0.f, 1.f);
+
+    float OriginalGravityScale;
+    float OriginalAirControl;
+
+    bool bIsGliding = false;
+    bool bIsDashing = false;
 
 public:	
 	// Called every frame

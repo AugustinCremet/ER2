@@ -43,8 +43,18 @@ void APlayerCharacter::BeginPlay()
     }
 }
 
+UAbilitySystemComponent* APlayerCharacter::GetAbilitySystemComponent() const
+{
+    return AbilitySystemComponent;
+}
+
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
+    if (bIsDashing)
+        return;
+
+    bIsMoving = true;
+
     const FVector2D DirectionValue = Value.Get<FVector2D>();
 
     UInputModifierDeadZone* DeadZone = (UInputModifierDeadZone*)MoveAction->Modifiers[0];
@@ -75,6 +85,12 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     }
     
     
+}
+
+void APlayerCharacter::StopMove(const FInputActionValue& Value)
+{
+    GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("STOPPP"));
+    bIsMoving = false;
 }
 
 void APlayerCharacter::Glide(const FInputActionValue& Value)
@@ -108,11 +124,14 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 {
     GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Start dash"));
 
-    if (!bIsDashing)
+    if (!bIsDashing && bIsMoving)
     {
+        CharacterMovementComponent->DisableMovement();
+        FVector DashDirection = CharacterMovementComponent->GetLastInputVector().GetSafeNormal();
+        InitialLocation = GetActorLocation();
+        TargetLocation = InitialLocation + DashDirection * DashDistance;
         bIsDashing = true;
-        float DashCooldownDuration = 1.f;
-        GetWorld()->GetTimerManager().SetTimer(DashTimerHandle, this, &APlayerCharacter::ResetDash, DashCooldownDuration, false);
+        DashTimer = 0.0f;
     }
 }
 
@@ -144,14 +163,34 @@ void APlayerCharacter::Tick(float DeltaTime)
 
         if (bIsDashing)
         {
-            GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Yellow, TEXT("Dash"));
-            FVector MovementDirection = CharacterMovementComponent->GetLastInputVector().GetSafeNormal();
-            FVector DashDestination = GetActorLocation() + MovementDirection * 50.0f;
-            float DashDuration = 1.0f;
+            GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Dashing"));
+            DashTimer += DeltaTime;
+            float Alpha = FMath::Clamp(DashTimer / DashDuration, 0.0f, 1.0f);
+            FVector NewLocation = FMath::Lerp(InitialLocation, TargetLocation, Alpha);
 
-            GetCharacterMovement()->DisableMovement();
+            FHitResult HitResult;
+            FCollisionQueryParams CollisionParams;
+            CollisionParams.AddIgnoredActor(this); // Ignore the current actor during the trace
 
-            SetActorLocation(DashDestination, false);
+            if (GetWorld()->SweepSingleByChannel(HitResult, GetActorLocation(), NewLocation, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(10.0f), CollisionParams))
+            {
+                // Collision detected, adjust dash distance to stop at hit location
+                TargetLocation = HitResult.Location;
+                DashDuration = DashTimer * Alpha; // Adjust duration based on current progress
+            }
+            else
+            {
+                SetActorLocation(NewLocation);
+            }
+
+            if (Alpha >= 1.0f)
+            {
+                // Dash completed
+                bIsDashing = false;
+                CharacterMovementComponent->SetMovementMode(MOVE_Walking);
+                GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Dash done"));
+                // Perform any actions after the dash is complete
+            }
         }
     }
 }
@@ -164,6 +203,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
     {
         EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopMove);
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
         EnhancedInputComponent->BindAction(GlideAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Glide);
         EnhancedInputComponent->BindAction(GlideAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopGlide);

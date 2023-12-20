@@ -6,23 +6,28 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "WalkableDetector.h"
+#include "AbilitySystemInterface.h"
 #include "PlayerCharacter.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
 
 UCLASS()
-class ER2_API APlayerCharacter : public ACharacter
+class ER2_API APlayerCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
+    virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
+    UAbilitySystemComponent* AbilitySystemComponent;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
     UInputMappingContext* PlayerMappingContext;
@@ -44,6 +49,7 @@ protected:
     UCharacterMovementComponent* CharacterMovementComponent;
 
     void Move(const FInputActionValue& Value);
+    void StopMove(const FInputActionValue& Value);
     void Glide(const FInputActionValue& Value);
     void StopGlide(const FInputActionValue& Value);
     void Dash(const FInputActionValue& Value);
@@ -59,8 +65,14 @@ protected:
     float OriginalAirControl;
 
     bool bIsGliding = false;
+    bool bIsMoving = false;
 
+    float DashDistance = 1000.0f;
+    float DashDuration = 0.1f;
+    float DashTimer = 0.0f;
     bool bIsDashing = false;
+    FVector InitialLocation;
+    FVector TargetLocation;
     FTimerHandle DashTimerHandle;
 
 public:	

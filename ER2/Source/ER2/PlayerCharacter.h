@@ -7,6 +7,8 @@
 #include "InputActionValue.h"
 #include "WalkableDetector.h"
 #include "AbilitySystemInterface.h"
+#include "AbilitySystemComponent.h"
+#include "Abilities/GameplayAbility.h"
 #include "PlayerCharacter.generated.h"
 
 class UInputMappingContext;
@@ -26,8 +28,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
     UAbilitySystemComponent* AbilitySystemComponent;
+    FGameplayAbilitySpecHandle Handle;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
+    TSubclassOf<UGameplayAbility> YourAbilityClass;
+    UGameplayAbility* NewAbilityInstance;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
     UInputMappingContext* PlayerMappingContext;
@@ -53,27 +59,24 @@ protected:
     void Glide(const FInputActionValue& Value);
     void StopGlide(const FInputActionValue& Value);
     void Dash(const FInputActionValue& Value);
-    void ResetDash();
 
     const FRotator FacingRight = FRotator(0, 0, 0);
-    const FRotator FacingLeft = FRotator(0, 180, 0);
-    const FVector XAxis = FVector(1.f, 0.f, 0.f);
-    const FVector YAxis = FVector(0.f, 1.f, 0.f);
-    const FVector ZAxis = FVector(0.f, 0.f, 1.f);
+    const FRotator FacingLeft = FRotator(0, 180.0f, 0);
+    const FVector XAxis = FVector(1.0f, 0.0f, 0.0f);
+    const FVector YAxis = FVector(0.0f, 1.0f, 0.0f);
+    const FVector ZAxis = FVector(0.0f, 0.0f, 1.0f);
+    FVector InitialLocation;
+    FVector TargetLocation;
 
     float OriginalGravityScale;
     float OriginalAirControl;
-
-    bool bIsGliding = false;
-    bool bIsMoving = false;
-
     float DashDistance = 1000.0f;
     float DashDuration = 0.1f;
     float DashTimer = 0.0f;
+
+    bool bIsGliding = false;
+    bool bIsMoving = false;
     bool bIsDashing = false;
-    FVector InitialLocation;
-    FVector TargetLocation;
-    FTimerHandle DashTimerHandle;
 
 public:	
 	// Called every frame

@@ -7,6 +7,7 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/World.h"
+#include "AbilityManager.h"
 #include "GameFramework/Character.h"
 
 // Sets default values
@@ -35,11 +36,47 @@ void APlayerCharacter::BeginPlay()
     WalkableDetectorComponent = FindComponentByClass<UWalkableDetector>();
     SkeletalMeshComponent = FindComponentByClass<USkeletalMeshComponent>();
     CharacterMovementComponent = FindComponentByClass<UCharacterMovementComponent>();
+    UAbilityManager* TheManager = FindComponentByClass<UAbilityManager>();
 
     if (CharacterMovementComponent)
     {
         OriginalGravityScale = CharacterMovementComponent->GravityScale;
         OriginalAirControl = CharacterMovementComponent->AirControl;
+    }
+
+    if (TheManager)
+    {
+        TheManager->GiveAbility();
+    }
+
+    AbilitySystemComponent = FindComponentByClass<UAbilitySystemComponent>();
+    //NewAbilityInstance = YourAbilityClass.GetDefaultObject();  
+
+    //if (AbilitySystemComponent && NewAbilityInstance)
+    //{
+    //    Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(YourAbilityClass, 1, 0));
+    //    AbilitySystemComponent->InitAbilityActorInfo(this, this);      
+    //}
+
+
+    //if (AbilitySystemComponent && AbilitySystemComponent->TryActivateAbility(Handle, true))
+    //{
+    //    if (AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Tests.GenericTag"))))
+    //    {
+    //        GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Has the tag"));
+    //    }
+
+    //    AbilitySystemComponent->ClearAbility(Handle);
+
+    //    if (!AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Tests.GenericTag"))))
+    //    {
+    //        GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Tag got removed"));
+    //    }
+    //}
+
+    if (AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Tests.GenericTag"))))
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Has the tag from the manager"));
     }
 }
 
@@ -89,16 +126,13 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerCharacter::StopMove(const FInputActionValue& Value)
 {
-    GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("STOPPP"));
     bIsMoving = false;
 }
 
 void APlayerCharacter::Glide(const FInputActionValue& Value)
 {
     if (!bIsGliding && JumpCurrentCount == 3)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Yellow, TEXT("Glide!"));
-        
+    {       
         bIsGliding = true;
         CharacterMovementComponent->Velocity = FVector(CharacterMovementComponent->Velocity.X, CharacterMovementComponent->Velocity.Y, 0);
         CharacterMovementComponent->GravityScale = 0.07f;
@@ -112,7 +146,6 @@ void APlayerCharacter::StopGlide(const FInputActionValue& Value)
     {
         if (bIsGliding)
         {
-            GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Yellow, TEXT("Stop glide"));
             bIsGliding = false;
             CharacterMovementComponent->GravityScale = OriginalGravityScale;
             CharacterMovementComponent->AirControl = OriginalAirControl;
@@ -122,8 +155,6 @@ void APlayerCharacter::StopGlide(const FInputActionValue& Value)
 
 void APlayerCharacter::Dash(const FInputActionValue& Value)
 {
-    GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Start dash"));
-
     if (!bIsDashing && bIsMoving)
     {
         CharacterMovementComponent->DisableMovement();
@@ -135,16 +166,6 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
     }
 }
 
-void APlayerCharacter::ResetDash()
-{
-    bIsDashing = false;
-    DashTimerHandle.Invalidate();
-
-    if (CharacterMovementComponent)
-    {
-        GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-    }
-}
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
@@ -155,7 +176,6 @@ void APlayerCharacter::Tick(float DeltaTime)
     {
         if (bIsGliding && !CharacterMovementComponent->IsFalling())
         {
-            GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Yellow, TEXT("On ground"));
             bIsGliding = false;
             CharacterMovementComponent->GravityScale = OriginalGravityScale;
             CharacterMovementComponent->AirControl = OriginalAirControl;
@@ -163,20 +183,18 @@ void APlayerCharacter::Tick(float DeltaTime)
 
         if (bIsDashing)
         {
-            GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Dashing"));
             DashTimer += DeltaTime;
             float Alpha = FMath::Clamp(DashTimer / DashDuration, 0.0f, 1.0f);
             FVector NewLocation = FMath::Lerp(InitialLocation, TargetLocation, Alpha);
 
             FHitResult HitResult;
             FCollisionQueryParams CollisionParams;
-            CollisionParams.AddIgnoredActor(this); // Ignore the current actor during the trace
+            CollisionParams.AddIgnoredActor(this);
 
             if (GetWorld()->SweepSingleByChannel(HitResult, GetActorLocation(), NewLocation, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(10.0f), CollisionParams))
             {
-                // Collision detected, adjust dash distance to stop at hit location
                 TargetLocation = HitResult.Location;
-                DashDuration = DashTimer * Alpha; // Adjust duration based on current progress
+                DashDuration = DashTimer * Alpha;
             }
             else
             {
@@ -185,11 +203,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 
             if (Alpha >= 1.0f)
             {
-                // Dash completed
                 bIsDashing = false;
                 CharacterMovementComponent->SetMovementMode(MOVE_Walking);
-                GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Dash done"));
-                // Perform any actions after the dash is complete
             }
         }
     }

@@ -2,6 +2,7 @@
 
 
 #include "AbilityManager.h"
+#include "AbilitySystemGlobals.h"
 
 // Sets default values for this component's properties
 UAbilityManager::UAbilityManager()
@@ -22,33 +23,70 @@ void UAbilityManager::BeginPlay()
 
     AbilitySystemComponent = GetOwner()->FindComponentByClass<UAbilitySystemComponent>();
 	
+    //if (AbilitySystemComponent)
+    //{
+    //    for (TSubclassOf<UGameplayAbility> Ability : Abilities)
+    //    {
+    //        AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, 0));
+    //    }
+
+    //    TArray<FGameplayAbilitySpec> AbilitySpecs = AbilitySystemComponent->GetActivatableAbilities();
+
+    //    for (FGameplayAbilitySpec& AbilitySpec : AbilitySpecs)
+    //    {
+    //        Handles.Add(AbilitySpec.Handle);
+    //    }
+
+    //}
 }
 
-void UAbilityManager::GiveAbility()
+TSubclassOf<UGameplayAbility> UAbilityManager::GetTheRightAbility(FGameplayTag GameplayTag)
 {
-    NewAbilityInstance = YourAbilityClass.GetDefaultObject();
+    TSubclassOf<UGameplayAbility> AbilityFound = NULL;
+    FGameplayTagContainer TagContainer;
+    TagContainer.AddTag(GameplayTag);
 
-    if (AbilitySystemComponent && NewAbilityInstance)
+    for (TSubclassOf<UGameplayAbility> Ability : Abilities)
     {
-        Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(YourAbilityClass, 1, 0));
-        AbilitySystemComponent->InitAbilityActorInfo(GetOwner(), GetOwner());
+        UGameplayAbility* abilitytogettag = Ability.GetDefaultObject();
+        if(TagContainer.HasAny(abilitytogettag->AbilityTags))
+        {
+            AbilityFound = Ability;
+            break;
+        }
     }
 
-    if (AbilitySystemComponent && AbilitySystemComponent->TryActivateAbility(Handle, true))
+    return AbilityFound;
+}
+
+void UAbilityManager::GiveAbility(FGameplayTag GameplayTag)
+{
+    if (AbilitySystemComponent)
     {
-        AbilitySystemComponent->TryActivateAbility(Handle, true);
+        TSubclassOf<UGameplayAbility> Ability = GetTheRightAbility(GameplayTag);
+        if (Ability)
+        {
+            FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, 0));
+            Abilities.Add(Ability);
+            Handles.Add(Handle);
+        }
+    }
+}
 
-        //if (AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Tests.GenericTag"))))
-        //{
-        //    GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Has the tag"));
-        //}
+void UAbilityManager::ActivateAbility(FGameplayTag GameplayTag)
+{
+    FGameplayTagContainer TagContainer;
+    TagContainer.AddTag(GameplayTag);
+    TArray<FGameplayAbilitySpecHandle> AbilitiesWithTag;
+    AbilitySystemComponent->FindAllAbilitiesWithTags(Handles, TagContainer);
 
-        //AbilitySystemComponent->ClearAbility(Handle);
-
-        //if (!AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Tests.GenericTag"))))
-        //{
-        //    GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Tag got removed"));
-        //}
+    for (FGameplayAbilitySpecHandle Handle : Handles)
+    {
+        if(Handle.IsValid())
+        {
+            AbilitySystemComponent->TryActivateAbility(Handle, true);
+            break;
+        }
     }
 }
 

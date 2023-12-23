@@ -20,18 +20,18 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+    TSubclassOf<UGameplayAbility> GetTheRightAbility(FGameplayTag GameplayTag);
 
     UAbilitySystemComponent* AbilitySystemComponent;
-    FGameplayAbilitySpecHandle Handle;
+    TArray<FGameplayAbilitySpecHandle> Handles;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
-    TSubclassOf<UGameplayAbility> YourAbilityClass;
+    TArray<TSubclassOf<UGameplayAbility>> Abilities;
     UGameplayAbility* NewAbilityInstance;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-    void GiveAbility();
-
-		
+    void GiveAbility(FGameplayTag GameplayTag);
+    void ActivateAbility(FGameplayTag GameplayTag);
 };

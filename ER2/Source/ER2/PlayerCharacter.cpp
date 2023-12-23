@@ -46,7 +46,8 @@ void APlayerCharacter::BeginPlay()
 
     if (TheManager)
     {
-        TheManager->GiveAbility();
+        TheManager->GiveAbility(FGameplayTag::RequestGameplayTag(FName("Ability.Dash")));
+        TheManager->ActivateAbility(FGameplayTag::RequestGameplayTag(FName("Ability.Dash")));
     }
 
     AbilitySystemComponent = FindComponentByClass<UAbilitySystemComponent>();
@@ -55,7 +56,7 @@ void APlayerCharacter::BeginPlay()
     //if (AbilitySystemComponent && NewAbilityInstance)
     //{
     //    Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(YourAbilityClass, 1, 0));
-    //    AbilitySystemComponent->InitAbilityActorInfo(this, this);      
+    //    AbilitySystemComponent->InitAbilityActorInfo(this, this); 
     //}
 
 
@@ -74,7 +75,7 @@ void APlayerCharacter::BeginPlay()
     //    }
     //}
 
-    if (AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Tests.GenericTag"))))
+    if (AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Ability.Dash"))))
     {
         GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Has the tag from the manager"));
     }

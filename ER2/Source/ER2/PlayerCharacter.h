@@ -9,6 +9,8 @@
 #include "AbilitySystemInterface.h"
 #include "AbilitySystemComponent.h"
 #include "Abilities/GameplayAbility.h"
+#include "AbilityManager.h"
+#include "UObject/Object.h"
 #include "PlayerCharacter.generated.h"
 
 class UInputMappingContext;
@@ -30,6 +32,7 @@ protected:
 
     UAbilitySystemComponent* AbilitySystemComponent;
     FGameplayAbilitySpecHandle Handle;
+    UAbilityManager* AbilityManager;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
     TSubclassOf<UGameplayAbility> YourAbilityClass;
@@ -56,6 +59,7 @@ protected:
 
     void Move(const FInputActionValue& Value);
     void StopMove(const FInputActionValue& Value);
+    void Jump(const FInputActionValue& Value);
     void Glide(const FInputActionValue& Value);
     void StopGlide(const FInputActionValue& Value);
     void Dash(const FInputActionValue& Value);
@@ -74,9 +78,7 @@ protected:
     float DashDuration = 0.1f;
     float DashTimer = 0.0f;
 
-    bool bIsGliding = false;
     bool bIsMoving = false;
-    bool bIsDashing = false;
 
 public:	
 	// Called every frame

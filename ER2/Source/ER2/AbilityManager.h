@@ -20,7 +20,9 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-    TSubclassOf<UGameplayAbility> GetTheRightAbility(FGameplayTag GameplayTag);
+    TSubclassOf<UGameplayAbility> GetGameplayAbility(FGameplayTag GameplayTag);
+    FGameplayAbilitySpecHandle GetGameplayAbilitySpecHandle(FGameplayTag GameplayTag);
+    FGameplayTag StringToGameplayTag(FString String);
 
     UAbilitySystemComponent* AbilitySystemComponent;
     TArray<FGameplayAbilitySpecHandle> Handles;
@@ -32,6 +34,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-    void GiveAbility(FGameplayTag GameplayTag);
-    void ActivateAbility(FGameplayTag GameplayTag);
+    void GiveAbility(FString String);
+    bool ActivateAbility(FString String);
+    void StopAbility(FString String);
+    bool HasTag(FString String);
 };

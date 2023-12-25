@@ -3,6 +3,7 @@
 
 #include "AbilityManager.h"
 #include "AbilitySystemGlobals.h"
+#include <Misc/OutputDeviceNull.h>
 
 // Sets default values for this component's properties
 UAbilityManager::UAbilityManager()
@@ -23,33 +24,21 @@ void UAbilityManager::BeginPlay()
 
     AbilitySystemComponent = GetOwner()->FindComponentByClass<UAbilitySystemComponent>();
 	
-    //if (AbilitySystemComponent)
-    //{
-    //    for (TSubclassOf<UGameplayAbility> Ability : Abilities)
-    //    {
-    //        AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, 0));
-    //    }
-
-    //    TArray<FGameplayAbilitySpec> AbilitySpecs = AbilitySystemComponent->GetActivatableAbilities();
-
-    //    for (FGameplayAbilitySpec& AbilitySpec : AbilitySpecs)
-    //    {
-    //        Handles.Add(AbilitySpec.Handle);
-    //    }
-
-    //}
+    GiveAbility("Ability.Dash");
+    GiveAbility("Ability.Jump");
+    GiveAbility("Ability.Jump.Double");
+    GiveAbility("Ability.Glide");
 }
 
-TSubclassOf<UGameplayAbility> UAbilityManager::GetTheRightAbility(FGameplayTag GameplayTag)
+TSubclassOf<UGameplayAbility> UAbilityManager::GetGameplayAbility(FGameplayTag GameplayTag)
 {
     TSubclassOf<UGameplayAbility> AbilityFound = NULL;
-    FGameplayTagContainer TagContainer;
-    TagContainer.AddTag(GameplayTag);
 
     for (TSubclassOf<UGameplayAbility> Ability : Abilities)
     {
-        UGameplayAbility* abilitytogettag = Ability.GetDefaultObject();
-        if(TagContainer.HasAny(abilitytogettag->AbilityTags))
+        UGameplayAbility* Abilitytogettag = Ability.GetDefaultObject();
+        FGameplayTagContainer TagOfThisAbility = Abilitytogettag->AbilityTags;
+        if(TagOfThisAbility.HasTagExact(GameplayTag))
         {
             AbilityFound = Ability;
             break;
@@ -59,11 +48,36 @@ TSubclassOf<UGameplayAbility> UAbilityManager::GetTheRightAbility(FGameplayTag G
     return AbilityFound;
 }
 
-void UAbilityManager::GiveAbility(FGameplayTag GameplayTag)
+FGameplayAbilitySpecHandle UAbilityManager::GetGameplayAbilitySpecHandle(FGameplayTag GameplayTag)
 {
+    FGameplayTagContainer TagContainer;
+    TagContainer.AddTag(GameplayTag);
+    TArray<FGameplayAbilitySpecHandle> AbilitiesWithTag;
+    AbilitySystemComponent->FindAllAbilitiesWithTags(Handles, TagContainer);
+
+    for (FGameplayAbilitySpecHandle Handle : Handles)
+    {
+        if (Handle.IsValid())
+        {
+            return Handle;
+        }
+    }
+
+    return FGameplayAbilitySpecHandle();
+}
+
+FGameplayTag UAbilityManager::StringToGameplayTag(FString String)
+{
+    return FGameplayTag::RequestGameplayTag(FName(String));
+}
+
+void UAbilityManager::GiveAbility(FString String)
+{
+    FGameplayTag GameplayTag = StringToGameplayTag(String);
+
     if (AbilitySystemComponent)
     {
-        TSubclassOf<UGameplayAbility> Ability = GetTheRightAbility(GameplayTag);
+        TSubclassOf<UGameplayAbility> Ability = GetGameplayAbility(GameplayTag);
         if (Ability)
         {
             FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, 0));
@@ -73,21 +87,37 @@ void UAbilityManager::GiveAbility(FGameplayTag GameplayTag)
     }
 }
 
-void UAbilityManager::ActivateAbility(FGameplayTag GameplayTag)
+bool UAbilityManager::ActivateAbility(FString String)
 {
-    FGameplayTagContainer TagContainer;
-    TagContainer.AddTag(GameplayTag);
-    TArray<FGameplayAbilitySpecHandle> AbilitiesWithTag;
-    AbilitySystemComponent->FindAllAbilitiesWithTags(Handles, TagContainer);
+    FGameplayTag GameplayTag = StringToGameplayTag(String);
+    FGameplayAbilitySpecHandle Handle = GetGameplayAbilitySpecHandle(GameplayTag);
 
-    for (FGameplayAbilitySpecHandle Handle : Handles)
+    if (Handle.IsValid() && AbilitySystemComponent->TryActivateAbility(Handle, true))
     {
-        if(Handle.IsValid())
-        {
-            AbilitySystemComponent->TryActivateAbility(Handle, true);
-            break;
-        }
+        return true;
     }
+    else
+    {
+        return false;
+    }
+}
+
+void UAbilityManager::StopAbility(FString String)
+{
+    FGameplayTag GameplayTag = StringToGameplayTag(String);
+    TSubclassOf<UGameplayAbility> Ability = GetGameplayAbility(GameplayTag);
+
+    if (Ability)
+    {
+        UGameplayAbility* Instance = Ability.GetDefaultObject();
+        AbilitySystemComponent->CancelAbility(Instance);
+    }
+}
+
+bool UAbilityManager::HasTag(FString String)
+{
+    FGameplayTag GameplayTag = StringToGameplayTag(String);
+    return AbilitySystemComponent->HasMatchingGameplayTag(GameplayTag);
 }
 
 // Called every frame

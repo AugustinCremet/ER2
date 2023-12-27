@@ -53,6 +53,9 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
     UInputAction* DashAction;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
+    bool bGiveAbility;
+
     UWalkableDetector* WalkableDetectorComponent;
     USkeletalMeshComponent* SkeletalMeshComponent;
     UCharacterMovementComponent* CharacterMovementComponent;

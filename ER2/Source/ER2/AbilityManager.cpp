@@ -4,6 +4,7 @@
 #include "AbilityManager.h"
 #include "AbilitySystemGlobals.h"
 #include <Misc/OutputDeviceNull.h>
+#include "Containers/UnrealString.h"
 
 // Sets default values for this component's properties
 UAbilityManager::UAbilityManager()
@@ -23,11 +24,10 @@ void UAbilityManager::BeginPlay()
 	Super::BeginPlay();
 
     AbilitySystemComponent = GetOwner()->FindComponentByClass<UAbilitySystemComponent>();
-	
-    GiveAbility("Ability.Dash");
-    GiveAbility("Ability.Jump");
-    GiveAbility("Ability.Jump.Double");
-    GiveAbility("Ability.Glide");
+    //GiveAbility("Ability.Dash");
+    //GiveAbility("Ability.Jump");
+    //GiveAbility("Ability.Jump.Double");
+    //GiveAbility("Ability.Glide");   
 }
 
 TSubclassOf<UGameplayAbility> UAbilityManager::GetGameplayAbility(FGameplayTag GameplayTag)
@@ -81,15 +81,31 @@ void UAbilityManager::GiveAbility(FString String)
         if (Ability)
         {
             FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, 0));
-            Abilities.Add(Ability);
+            AbilitiesTag.Add(GameplayTag);
             Handles.Add(Handle);
         }
     }
 }
 
+void UAbilityManager::GiveAbility(FGameplayTag GameplayTag)
+{
+    if (AbilitySystemComponent)
+    {
+        TSubclassOf<UGameplayAbility> Ability = GetGameplayAbility(GameplayTag);
+        if (Ability)
+        {
+            FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, 0));
+            AbilitiesTag.Add(GameplayTag);
+            Handles.Add(Handle);
+        }
+    }
+}
+
+
 bool UAbilityManager::ActivateAbility(FString String)
 {
     FGameplayTag GameplayTag = StringToGameplayTag(String);
+    TSubclassOf<UGameplayAbility> Ability = GetGameplayAbility(GameplayTag);
     FGameplayAbilitySpecHandle Handle = GetGameplayAbilitySpecHandle(GameplayTag);
 
     if (Handle.IsValid() && AbilitySystemComponent->TryActivateAbility(Handle, true))

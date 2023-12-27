@@ -41,6 +41,12 @@ void APlayerCharacter::BeginPlay()
         OriginalGravityScale = CharacterMovementComponent->GravityScale;
         OriginalAirControl = CharacterMovementComponent->AirControl;
     }
+
+    if (bGiveAbility)
+    {
+        AbilityManager->GiveAbility("Ability.Jump");
+        AbilityManager->GiveAbility("Ability.Dash");
+    }
 }
 
 UAbilitySystemComponent* APlayerCharacter::GetAbilitySystemComponent() const

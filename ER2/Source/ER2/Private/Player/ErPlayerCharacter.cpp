@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PlayerCharacter.h"
+#include "Player/ErPlayerCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Components/InputComponent.h"
@@ -9,14 +9,14 @@
 #include "GameFramework/Character.h"
 
 // Sets default values
-APlayerCharacter::APlayerCharacter()
+AErPlayerCharacter::AErPlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
 // Called when the game starts or when spawned
-void APlayerCharacter::BeginPlay()
+void AErPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -49,12 +49,12 @@ void APlayerCharacter::BeginPlay()
     }
 }
 
-UAbilitySystemComponent* APlayerCharacter::GetAbilitySystemComponent() const
+UAbilitySystemComponent* AErPlayerCharacter::GetAbilitySystemComponent() const
 {
     return AbilitySystemComponent;
 }
 
-void APlayerCharacter::Move(const FInputActionValue& Value)
+void AErPlayerCharacter::Move(const FInputActionValue& Value)
 {
     if (AbilityManager->HasTag("Ability.Dash"))
         return;
@@ -93,12 +93,12 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     
 }
 
-void APlayerCharacter::StopMove(const FInputActionValue& Value)
+void AErPlayerCharacter::StopMove(const FInputActionValue& Value)
 {
     bIsMoving = false;
 }
 
-void APlayerCharacter::Jump(const FInputActionValue& Value)
+void AErPlayerCharacter::Jump(const FInputActionValue& Value)
 {
     if (AbilityManager->ActivateAbility("Ability.Jump"))
     {
@@ -112,7 +112,7 @@ void APlayerCharacter::Jump(const FInputActionValue& Value)
     }
 }
 
-void APlayerCharacter::Glide(const FInputActionValue& Value)
+void AErPlayerCharacter::Glide(const FInputActionValue& Value)
 {
     if (AbilityManager->ActivateAbility("Ability.Glide"))
     {      
@@ -122,7 +122,7 @@ void APlayerCharacter::Glide(const FInputActionValue& Value)
     }
 }
 
-void APlayerCharacter::StopGlide(const FInputActionValue& Value)
+void AErPlayerCharacter::StopGlide(const FInputActionValue& Value)
 {
     if (CharacterMovementComponent)
     {
@@ -135,7 +135,7 @@ void APlayerCharacter::StopGlide(const FInputActionValue& Value)
     }
 }
 
-void APlayerCharacter::Dash(const FInputActionValue& Value)
+void AErPlayerCharacter::Dash(const FInputActionValue& Value)
 {
     if (bIsMoving && AbilityManager->ActivateAbility("Ability.Dash"))
     {
@@ -149,7 +149,7 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 
 
 // Called every frame
-void APlayerCharacter::Tick(float DeltaTime)
+void AErPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -199,18 +199,18 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 
 // Called to bind functionality to input
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AErPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
     if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
     {
-        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopMove);
-        EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &APlayerCharacter::Jump);
-        EnhancedInputComponent->BindAction(GlideAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Glide);
-        EnhancedInputComponent->BindAction(GlideAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopGlide);
-        EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &APlayerCharacter::Dash);
+        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AErPlayerCharacter::Move);
+        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AErPlayerCharacter::StopMove);
+        EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AErPlayerCharacter::Jump);
+        EnhancedInputComponent->BindAction(GlideAction, ETriggerEvent::Triggered, this, &AErPlayerCharacter::Glide);
+        EnhancedInputComponent->BindAction(GlideAction, ETriggerEvent::Completed, this, &AErPlayerCharacter::StopGlide);
+        EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AErPlayerCharacter::Dash);
     }
 }
 

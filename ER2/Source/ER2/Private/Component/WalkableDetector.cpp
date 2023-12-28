@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "WalkableDetector.h"
+#include "Component/WalkableDetector.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 

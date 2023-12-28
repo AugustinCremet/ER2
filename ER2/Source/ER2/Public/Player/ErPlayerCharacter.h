@@ -5,25 +5,25 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "WalkableDetector.h"
+#include "Component/WalkableDetector.h"
 #include "AbilitySystemInterface.h"
 #include "AbilitySystemComponent.h"
 #include "Abilities/GameplayAbility.h"
-#include "AbilityManager.h"
+#include "Component/AbilityManager.h"
 #include "UObject/Object.h"
-#include "PlayerCharacter.generated.h"
+#include "ErPlayerCharacter.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
 
 UCLASS()
-class ER2_API APlayerCharacter : public ACharacter, public IAbilitySystemInterface
+class ER2_API AErPlayerCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	APlayerCharacter();
+	AErPlayerCharacter();
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:

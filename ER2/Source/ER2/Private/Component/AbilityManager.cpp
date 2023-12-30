@@ -23,7 +23,7 @@ void UAbilityManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-    AbilitySystemComponent = GetOwner()->FindComponentByClass<UAbilitySystemComponent>();
+    //AbilitySystemComponent = GetOwner()->FindComponentByClass<UAbilitySystemComponent>();
     //GiveAbility("Ability.Dash");
     //GiveAbility("Ability.Jump");
     //GiveAbility("Ability.Jump.Double");
@@ -133,7 +133,8 @@ void UAbilityManager::StopAbility(FString String)
 bool UAbilityManager::HasTag(FString String)
 {
     FGameplayTag GameplayTag = StringToGameplayTag(String);
-    return AbilitySystemComponent->HasMatchingGameplayTag(GameplayTag);
+    return false;
+    //return AbilitySystemComponent->HasMatchingGameplayTag(GameplayTag);
 }
 
 // Called every frame

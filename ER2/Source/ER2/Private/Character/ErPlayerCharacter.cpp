@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Player/ErPlayerCharacter.h"
+#include "Character/ErPlayerCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Components/InputComponent.h"
@@ -47,11 +47,6 @@ void AErPlayerCharacter::BeginPlay()
         AbilityManager->GiveAbility("Ability.Jump");
         AbilityManager->GiveAbility("Ability.Dash");
     }
-}
-
-UAbilitySystemComponent* AErPlayerCharacter::GetAbilitySystemComponent() const
-{
-    return AbilitySystemComponent;
 }
 
 void AErPlayerCharacter::Move(const FInputActionValue& Value)

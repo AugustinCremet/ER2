@@ -3,11 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Character/ErCharacterBase.h"
 #include "InputActionValue.h"
 #include "Component/WalkableDetector.h"
-#include "AbilitySystemInterface.h"
-#include "AbilitySystemComponent.h"
 #include "Abilities/GameplayAbility.h"
 #include "Component/AbilityManager.h"
 #include "UObject/Object.h"
@@ -17,14 +15,13 @@ class UInputMappingContext;
 class UInputAction;
 
 UCLASS()
-class ER2_API AErPlayerCharacter : public ACharacter, public IAbilitySystemInterface
+class ER2_API AErPlayerCharacter : public AErCharacterBase
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AErPlayerCharacter();
-    virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
 	// Called when the game starts or when spawned

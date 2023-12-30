@@ -22,13 +22,16 @@ class ER2_API AErPlayerCharacter : public AErCharacterBase
 public:
 	// Sets default values for this character's properties
 	AErPlayerCharacter();
+    virtual void PossessedBy(AController* NewController) override;
+private:
+    void InitAbilityActorInfo();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
     UAbilitySystemComponent* AbilitySystemComponent;
-    FGameplayAbilitySpecHandle Handle;
+    UAttributeSet* AttributeSet;
     UAbilityManager* AbilityManager;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")

@@ -10,8 +10,3 @@ UErAttributeSet::UErAttributeSet()
     InitMana(100.0f);
     InitMaxMana(100.0f);
 }
-
-//void UErAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
-//{
-//    GAMEPLAYATTRIBUTE_REPNOTIFY(UErAttributeSet, Health, OldHealth);
-//}

@@ -5,6 +5,11 @@
 #include "AbilitySystemGlobals.h"
 #include <Misc/OutputDeviceNull.h>
 #include "Containers/UnrealString.h"
+#include "Player/ErPlayerState.h"
+
+
+class APawn;
+class APlayerState;
 
 // Sets default values for this component's properties
 UAbilityManager::UAbilityManager()
@@ -23,7 +28,9 @@ void UAbilityManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-    //AbilitySystemComponent = GetOwner()->FindComponentByClass<UAbilitySystemComponent>();
+    APawn* Pawn = Cast<APawn>(GetOwner());
+    AErPlayerState* PlayerState = Cast<AErPlayerState>(Pawn->GetPlayerState());
+    AbilitySystemComponent = PlayerState->GetAbilitySystemComponent();
     //GiveAbility("Ability.Dash");
     //GiveAbility("Ability.Jump");
     //GiveAbility("Ability.Jump.Double");
@@ -133,8 +140,7 @@ void UAbilityManager::StopAbility(FString String)
 bool UAbilityManager::HasTag(FString String)
 {
     FGameplayTag GameplayTag = StringToGameplayTag(String);
-    return false;
-    //return AbilitySystemComponent->HasMatchingGameplayTag(GameplayTag);
+    return AbilitySystemComponent->HasMatchingGameplayTag(GameplayTag);
 }
 
 // Called every frame

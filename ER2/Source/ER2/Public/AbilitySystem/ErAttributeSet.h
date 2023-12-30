@@ -24,12 +24,9 @@ class ER2_API UErAttributeSet : public UAttributeSet
 public:
     UErAttributeSet();
 
-    UPROPERTY(BlueprintReadOnly, /*ReplicatedUsing = OnRep_Health,*/ Category = "Vital Attributes")
+    UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
     FGameplayAttributeData Health;
     ATTRIBUTE_ACCESSORS(UErAttributeSet, Health);
-
-    //UFUNCTION()
-    //void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 
     UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
     FGameplayAttributeData MaxHealth;

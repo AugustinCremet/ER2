@@ -7,12 +7,38 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
+#include "Player/ErPlayerState.h"
+#include "UI/HUD/ErHUD.h"
 
 // Sets default values
 AErPlayerCharacter::AErPlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+}
+
+void AErPlayerCharacter::PossessedBy(AController* NewController)
+{
+    Super::PossessedBy(NewController);
+    InitAbilityActorInfo();
+}
+
+void AErPlayerCharacter::InitAbilityActorInfo()
+{
+    AErPlayerState* ErPlayerState = GetPlayerState<AErPlayerState>();
+    check(ErPlayerState);
+    ErPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(ErPlayerState, this);
+    AbilitySystemComponent = ErPlayerState->GetAbilitySystemComponent();
+    AttributeSet = ErPlayerState->GetAttributeSet();
+    GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Emerald, TEXT("InitAbilityActorInfo"), false);
+
+    if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+    {
+        if(AErHUD* ErHUD = Cast<AErHUD>(PlayerController->GetHUD()))
+        {
+            ErHUD->InitOverlay(PlayerController, ErPlayerState, AbilitySystemComponent, AttributeSet);
+        }
+    }
 }
 
 // Called when the game starts or when spawned

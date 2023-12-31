@@ -5,7 +5,7 @@
 
 UErAttributeSet::UErAttributeSet()
 {
-    InitHealth(100.0f);
+    InitHealth(10.0f);
     InitMaxHealth(100.0f);
     InitMana(100.0f);
     InitMaxMana(100.0f);

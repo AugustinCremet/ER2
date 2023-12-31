@@ -30,12 +30,12 @@ void AErPlayerCharacter::InitAbilityActorInfo()
     ErPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(ErPlayerState, this);
     AbilitySystemComponent = ErPlayerState->GetAbilitySystemComponent();
     AttributeSet = ErPlayerState->GetAttributeSet();
-    GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Emerald, TEXT("InitAbilityActorInfo"), false);
 
     if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
     {
         if(AErHUD* ErHUD = Cast<AErHUD>(PlayerController->GetHUD()))
         {
+            GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Emerald, TEXT("InitOverlay"), false);
             ErHUD->InitOverlay(PlayerController, ErPlayerState, AbilitySystemComponent, AttributeSet);
         }
     }
@@ -45,7 +45,7 @@ void AErPlayerCharacter::InitAbilityActorInfo()
 void AErPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+    InitAbilityActorInfo();
     APlayerController* PlayerController = Cast<APlayerController>(GetController());
     if (PlayerController)
     {

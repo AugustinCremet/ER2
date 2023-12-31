@@ -10,3 +10,11 @@ void UErWidgetController::SetWidgetControllerParams(const FWidgetControllerParam
     AbilitySystemComponent = WCParams.AbilitySystemComponent;
     AttributeSet = WCParams.AttributeSet;
 }
+
+void UErWidgetController::BroadcastInitialValues()
+{
+}
+
+void UErWidgetController::BindCallbacksToDependencies()
+{
+}

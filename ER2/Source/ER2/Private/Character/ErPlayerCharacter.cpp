@@ -8,6 +8,7 @@
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "Player/ErPlayerState.h"
+#include "AbilitySystem/ErAttributeSet.h"
 #include "UI/HUD/ErHUD.h"
 
 // Sets default values
@@ -20,7 +21,6 @@ AErPlayerCharacter::AErPlayerCharacter()
 void AErPlayerCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
-    InitAbilityActorInfo();
 }
 
 void AErPlayerCharacter::InitAbilityActorInfo()
@@ -35,7 +35,6 @@ void AErPlayerCharacter::InitAbilityActorInfo()
     {
         if(AErHUD* ErHUD = Cast<AErHUD>(PlayerController->GetHUD()))
         {
-            GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Emerald, TEXT("InitOverlay"), false);
             ErHUD->InitOverlay(PlayerController, ErPlayerState, AbilitySystemComponent, AttributeSet);
         }
     }
@@ -46,6 +45,7 @@ void AErPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
     InitAbilityActorInfo();
+
     APlayerController* PlayerController = Cast<APlayerController>(GetController());
     if (PlayerController)
     {

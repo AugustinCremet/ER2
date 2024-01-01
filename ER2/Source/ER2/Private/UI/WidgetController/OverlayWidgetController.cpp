@@ -22,6 +22,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 void UOverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data)
 {
+    GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Emerald, TEXT("HealthChanged"), false);
     OnHealthChanged.Broadcast(Data.NewValue);
 }
 

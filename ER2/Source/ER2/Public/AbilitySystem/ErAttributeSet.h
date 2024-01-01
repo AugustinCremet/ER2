@@ -23,6 +23,7 @@ class ER2_API UErAttributeSet : public UAttributeSet
 	
 public:
     UErAttributeSet();
+    virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
     UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
     FGameplayAttributeData Health;

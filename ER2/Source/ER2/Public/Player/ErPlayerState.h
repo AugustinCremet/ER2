@@ -21,6 +21,7 @@ class ER2_API AErPlayerState : public APlayerState, public IAbilitySystemInterfa
 public:
     AErPlayerState();
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+    UFUNCTION(BlueprintCallable)
     UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 	
 protected:

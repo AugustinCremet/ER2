@@ -32,7 +32,7 @@ void UAbilityManager::BeginPlay()
     AErPlayerState* PlayerState = Cast<AErPlayerState>(Pawn->GetPlayerState());
     AbilitySystemComponent = PlayerState->GetAbilitySystemComponent();
     //GiveAbility("Ability.Dash");
-    //GiveAbility("Ability.Jump");
+    GiveAbility("Ability.Jump");
     //GiveAbility("Ability.Jump.Double");
     //GiveAbility("Ability.Glide");   
 }

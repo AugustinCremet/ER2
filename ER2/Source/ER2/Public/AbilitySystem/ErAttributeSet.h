@@ -13,6 +13,20 @@ GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+USTRUCT(BlueprintType)
+struct FAttributeNTag
+{
+    GENERATED_BODY()
+
+    FAttributeNTag() {}
+    FAttributeNTag(FGameplayAttribute Attribute, FGameplayAttributeData AttributeData, FString String);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FGameplayAttribute Attribute;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FGameplayAttributeData AttributeData;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FGameplayTag Tag;
+};
 /**
  * 
  */
@@ -23,7 +37,6 @@ class ER2_API UErAttributeSet : public UAttributeSet
 	
 public:
     UErAttributeSet();
-    virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
     UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
     FGameplayAttributeData Health;
@@ -34,10 +47,18 @@ public:
     ATTRIBUTE_ACCESSORS(UErAttributeSet, MaxHealth);
 
     UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
-    FGameplayAttributeData Mana;
-    ATTRIBUTE_ACCESSORS(UErAttributeSet, Mana);
+    FGameplayAttributeData Rage;
+    ATTRIBUTE_ACCESSORS(UErAttributeSet, Rage);
 
     UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
-    FGameplayAttributeData MaxMana;
-    ATTRIBUTE_ACCESSORS(UErAttributeSet, MaxMana);
+    FGameplayAttributeData MaxRage;
+    ATTRIBUTE_ACCESSORS(UErAttributeSet, MaxRage);
+
+    UPROPERTY(BlueprintReadOnly)
+    TArray<FAttributeNTag> AttributesDataNTag;
+
+    UFUNCTION(BlueprintCallable)
+    void SetAttributesValue(FGameplayTag Tag, float Value);
+    UFUNCTION(BlueprintPure)
+    float GetAttributeValue(FGameplayAttribute Attribute);
 };

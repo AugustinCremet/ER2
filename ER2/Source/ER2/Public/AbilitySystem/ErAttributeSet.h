@@ -19,11 +19,9 @@ struct FAttributeNTag
     GENERATED_BODY()
 
     FAttributeNTag() {}
-    FAttributeNTag(FGameplayAttribute Attribute, FGameplayAttributeData AttributeData, FString String);
+    FAttributeNTag(FGameplayAttribute Attribute, FString String);
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGameplayAttribute Attribute;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FGameplayAttributeData AttributeData;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGameplayTag Tag;
 };
@@ -53,6 +51,10 @@ public:
     UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
     FGameplayAttributeData MaxRage;
     ATTRIBUTE_ACCESSORS(UErAttributeSet, MaxRage);
+
+    UPROPERTY(BlueprintReadOnly, Category = "Cooldowns")
+    FGameplayAttributeData DashCD;
+    ATTRIBUTE_ACCESSORS(UErAttributeSet, DashCD);
 
     UPROPERTY(BlueprintReadOnly)
     TArray<FAttributeNTag> AttributesDataNTag;

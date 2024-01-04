@@ -67,12 +67,6 @@ void AErPlayerCharacter::BeginPlay()
         OriginalGravityScale = CharacterMovementComponent->GravityScale;
         OriginalAirControl = CharacterMovementComponent->AirControl;
     }
-
-    if (bGiveAbility)
-    {
-        AbilityManager->GiveAbility("Ability.Jump");
-        AbilityManager->GiveAbility("Ability.Dash");
-    }
 }
 
 void AErPlayerCharacter::Move(const FInputActionValue& Value)
@@ -168,6 +162,10 @@ void AErPlayerCharacter::Dash(const FInputActionValue& Value)
     }
 }
 
+void AErPlayerCharacter::LightAttack(const FInputActionValue& Value)
+{
+}
+
 
 // Called every frame
 void AErPlayerCharacter::Tick(float DeltaTime)
@@ -232,6 +230,7 @@ void AErPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
         EnhancedInputComponent->BindAction(GlideAction, ETriggerEvent::Triggered, this, &AErPlayerCharacter::Glide);
         EnhancedInputComponent->BindAction(GlideAction, ETriggerEvent::Completed, this, &AErPlayerCharacter::StopGlide);
         EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AErPlayerCharacter::Dash);
+        EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Started, this, &AErPlayerCharacter::LightAttack);
     }
 }
 

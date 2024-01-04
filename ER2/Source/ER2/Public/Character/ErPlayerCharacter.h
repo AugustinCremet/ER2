@@ -53,8 +53,8 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
     UInputAction* DashAction;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
-    bool bGiveAbility;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+    UInputAction* LightAttackAction;
 
     UWalkableDetector* WalkableDetectorComponent;
     USkeletalMeshComponent* SkeletalMeshComponent;
@@ -66,6 +66,7 @@ protected:
     void Glide(const FInputActionValue& Value);
     void StopGlide(const FInputActionValue& Value);
     void Dash(const FInputActionValue& Value);
+    void LightAttack(const FInputActionValue& Value);
 
     const FRotator FacingRight = FRotator(0, 0, 0);
     const FRotator FacingLeft = FRotator(0, 180.0f, 0);

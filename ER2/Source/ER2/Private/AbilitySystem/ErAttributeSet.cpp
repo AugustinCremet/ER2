@@ -6,13 +6,15 @@
 UErAttributeSet::UErAttributeSet()
 {
     InitHealth(30.0f);
-    AttributesDataNTag.Add(FAttributeNTag(GetHealthAttribute(), Health, "Attribute.Health"));
+    AttributesDataNTag.Add(FAttributeNTag(GetHealthAttribute(), "Attribute.Vital.Health"));
     InitMaxHealth(100.0f);
-    AttributesDataNTag.Add(FAttributeNTag(GetMaxHealthAttribute(), MaxHealth, "Attribute.MaxHealth"));
+    AttributesDataNTag.Add(FAttributeNTag(GetMaxHealthAttribute(), "Attribute.Vital.MaxHealth"));
     InitRage(100.0f);
-    AttributesDataNTag.Add(FAttributeNTag(GetRageAttribute(), Rage, "Attribute.Rage"));
+    AttributesDataNTag.Add(FAttributeNTag(GetRageAttribute(), "Attribute.Vital.Rage"));
     InitMaxRage(100.0f);
-    AttributesDataNTag.Add(FAttributeNTag(GetMaxRageAttribute(), MaxRage, "Attribute.MaxRage"));
+    AttributesDataNTag.Add(FAttributeNTag(GetMaxRageAttribute(), "Attribute.Vital.MaxRage"));
+    InitDashCD(10.0f);
+    AttributesDataNTag.Add(FAttributeNTag(GetDashCDAttribute(), "Attribute.Cooldown.Dash"));
 }
 
 void UErAttributeSet::SetAttributesValue(FGameplayTag Tag, float Value)
@@ -33,9 +35,8 @@ float UErAttributeSet::GetAttributeValue(FGameplayAttribute Attribute)
     return Value;
 }
 
-FAttributeNTag::FAttributeNTag(FGameplayAttribute NewAttribute, FGameplayAttributeData NewAttributeData, FString String)
+FAttributeNTag::FAttributeNTag(FGameplayAttribute NewAttribute, FString String)
 {
     Attribute = NewAttribute;
-    AttributeData = NewAttributeData;
     Tag = FGameplayTag::RequestGameplayTag(FName(String));
 }

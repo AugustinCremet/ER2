@@ -33,6 +33,7 @@ void UAbilityManager::BeginPlay()
     AbilitySystemComponent = PlayerState->GetAbilitySystemComponent();
     //GiveAbility("Ability.Dash");
     GiveAbility("Ability.Jump");
+    GiveAbility("Ability.Attack.Light");
     //GiveAbility("Ability.Jump.Double");
     //GiveAbility("Ability.Glide");   
 }

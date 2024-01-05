@@ -164,6 +164,10 @@ void AErPlayerCharacter::Dash(const FInputActionValue& Value)
 
 void AErPlayerCharacter::LightAttack(const FInputActionValue& Value)
 {
+    if (AbilityManager->ActivateAbility("Ability.Attack.Light"))
+    {
+
+    }
 }
 
 

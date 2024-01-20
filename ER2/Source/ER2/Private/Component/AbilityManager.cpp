@@ -34,8 +34,8 @@ void UAbilityManager::BeginPlay()
     //GiveAbility("Ability.Dash");
     GiveAbility("Ability.Jump");
     GiveAbility("Ability.Attack.Light");
-    //GiveAbility("Ability.Jump.Double");
-    //GiveAbility("Ability.Glide");   
+    GiveAbility("Ability.Jump.Double");
+    GiveAbility("Ability.Glide");   
 }
 
 TSubclassOf<UGameplayAbility> UAbilityManager::GetGameplayAbility(FGameplayTag GameplayTag)

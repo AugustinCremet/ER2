@@ -52,6 +52,22 @@ public:
     FGameplayAttributeData MaxRage;
     ATTRIBUTE_ACCESSORS(UErAttributeSet, MaxRage);
 
+    UPROPERTY(BlueprintReadOnly, Category = "Stats Attributes")
+    FGameplayAttributeData Strength;
+    ATTRIBUTE_ACCESSORS(UErAttributeSet, Strength);
+
+    UPROPERTY(BlueprintReadOnly, Category = "Stats Attributes")
+    FGameplayAttributeData Dexterity;
+    ATTRIBUTE_ACCESSORS(UErAttributeSet, Dexterity);
+
+    UPROPERTY(BlueprintReadOnly, Category = "Stats Attributes")
+    FGameplayAttributeData RageStat;
+    ATTRIBUTE_ACCESSORS(UErAttributeSet, RageStat);
+
+    UPROPERTY(BlueprintReadOnly, Category = "Stats Attributes")
+    FGameplayAttributeData Mobility;
+    ATTRIBUTE_ACCESSORS(UErAttributeSet, Mobility);
+
     UPROPERTY(BlueprintReadOnly, Category = "Cooldowns")
     FGameplayAttributeData DashCD;
     ATTRIBUTE_ACCESSORS(UErAttributeSet, DashCD);

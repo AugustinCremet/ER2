@@ -14,7 +14,15 @@ UErAttributeSet::UErAttributeSet()
     InitMaxRage(100.0f);
     AttributesDataNTag.Add(FAttributeNTag(GetMaxRageAttribute(), "Attribute.Vital.MaxRage"));
     InitDashCD(10.0f);
-    AttributesDataNTag.Add(FAttributeNTag(GetDashCDAttribute(), "Attribute.Cooldown.Dash"));
+    AttributesDataNTag.Add(FAttributeNTag(GetDashCDAttribute(), "Attribute.Cooldowns.Dash"));
+    InitStrength(0.0f);                                                     
+    AttributesDataNTag.Add(FAttributeNTag(GetStrengthAttribute(), "Attribute.Stats.Strength"));
+    InitDexterity(0.0f);                                                     
+    AttributesDataNTag.Add(FAttributeNTag(GetDexterityAttribute(), "Attribute.Stats.Dexterity"));
+    InitRageStat(0.0f);                                                     
+    AttributesDataNTag.Add(FAttributeNTag(GetRageStatAttribute(), "Attribute.Stats.Rage"));
+    InitMobility(0.0f);                                                     
+    AttributesDataNTag.Add(FAttributeNTag(GetMobilityAttribute(), "Attribute.Stats.Mobility"));
 }
 
 void UErAttributeSet::SetAttributesValue(FGameplayTag Tag, float Value)

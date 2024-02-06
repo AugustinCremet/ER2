@@ -34,8 +34,8 @@ void UAbilityManager::BeginPlay()
     //GiveAbility("Ability.Dash");
     GiveAbility("Ability.Jump");
     GiveAbility("Ability.Attack.Light");
-    GiveAbility("Ability.Jump.Double");
-    GiveAbility("Ability.Glide");   
+    //GiveAbility("Ability.Jump.Double");
+    //GiveAbility("Ability.Glide");   
 }
 
 TSubclassOf<UGameplayAbility> UAbilityManager::GetGameplayAbility(FGameplayTag GameplayTag)
@@ -106,6 +106,20 @@ void UAbilityManager::GiveAbility(FGameplayTag GameplayTag)
             AbilitiesTag.Add(GameplayTag);
             Handles.Add(Handle);
         }
+    }
+}
+
+bool UAbilityManager::HasAbility(FGameplayTag GameplayTag)
+{
+    FGameplayAbilitySpecHandle Handle = GetGameplayAbilitySpecHandle(GameplayTag);
+
+    if (Handle.IsValid())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 

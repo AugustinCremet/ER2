@@ -39,6 +39,8 @@ public:
     void GiveAbility(FString String);
     UFUNCTION(BlueprintCallable, Category = "AbilityManager")
     void GiveAbility(FGameplayTag GameplayTag);
+    UFUNCTION(BlueprintCallable, Category = "AbilityManager")
+    bool HasAbility(FGameplayTag GameplayTag);
     bool ActivateAbility(FString String);
     void StopAbility(FString String);
     bool HasTag(FString String);
